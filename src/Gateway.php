@@ -358,6 +358,16 @@ class Gateway {
         return $this->do_request('POST', '/credit_cards', $payload);
     }
 
+	/**
+	 * Fetch the details of a previously tokenized credit card
+	 * @param string $token the card token
+	 * @return \StdObject
+	 */
+    public function get_tokenized_card($token) {
+		if(is_null($token) || (strlen($token) === 0)) throw new \InvalidArgumentException('Token is a required field.');
+		return $this->do_request('GET', '/credit_cards/'.$token);
+	}
+
     /**
      * Create a new customer for recurring subscriptions
      * @param string $first_name the customers first name
