@@ -143,9 +143,10 @@ class Gateway {
      * @param string $reference the purchase reference
      * @param string $cvv the card verification value - optional but recommended
      * @param string $currency the currency code for the transaction. Defaults to AUD
+	 * @param array<string,string> $extra an assoc. array of extra params to merge into the request (e.g. metadata, fraud etc)
      * @return \StdObject
      */
-    public function token_purchase($token, $amount, $reference, $cvv = null, $currency = 'AUD') {
+    public function token_purchase($token, $amount, $reference, $cvv = null, $currency = 'AUD', $extra = null) {
         if(is_null($amount)) throw new InvalidArgumentException('Amount is a required field.');
         if(is_null($reference)) throw new InvalidArgumentException('Reference is a required field.');
         if(strlen($reference) === 0) throw new InvalidArgumentException('Reference is a required field.');
@@ -162,6 +163,11 @@ class Gateway {
             'reference' => $reference,
             'currency' => $currency
         ];
+
+		if (is_array($extra)) {
+			$payload = array_merge_recursive($payload, $extra);
+		}
+
         return $this->do_request('POST', '/purchases', $payload);
     }
 
