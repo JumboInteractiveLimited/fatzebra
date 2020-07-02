@@ -143,7 +143,7 @@ class Gateway {
      * @param string $reference the purchase reference
      * @param string $cvv the card verification value - optional but recommended
      * @param string $currency the currency code for the transaction. Defaults to AUD
-	 * @param array<string,string> $extra an assoc. array of extra params to merge into the request (e.g. metadata, fraud etc)
+     * @param array<string,mixed> $extra an assoc. array of extra params to merge into the request (e.g. metadata, fraud etc)
      * @return \StdObject
      */
     public function token_purchase($token, $amount, $reference, $cvv = null, $currency = 'AUD', $extra = null) {
@@ -164,9 +164,9 @@ class Gateway {
             'currency' => $currency
         ];
 
-		if (is_array($extra)) {
-			$payload = array_merge_recursive($payload, $extra);
-		}
+        if (is_array($extra)) {
+            $payload['extra'] = $extra;
+        }
 
         return $this->do_request('POST', '/purchases', $payload);
     }
@@ -255,7 +255,7 @@ class Gateway {
      * Performs an capture for an existing authorization
      * @param string $transaction_id the pre-auth transaction id (e.g. xxxx-P-yyyyyyyy)
      * @param float $amount the amount ot capture
-     * @param array<string,string> $extra an assoc. array of extra params to merge into the request (e.g. metadata, fraud etc)
+     * @param array<string,mixed> $extra an assoc. array of extra params to merge into the request (e.g. metadata, fraud etc)
      * @return \StdObject
      */
     public function capture($transaction_id, $amount, $extra = null) {
@@ -267,7 +267,7 @@ class Gateway {
         $payload = ['amount' => $int_amount];
 
         if (is_array($extra)) {
-            $payload = array_merge_recursive($payload, $extra);
+            $payload['extra'] = $extra;
         }
 
         return $this->do_request('POST', '/purchases/' . $transaction_id . '/capture', $payload);
